@@ -11,7 +11,7 @@ export function TransactionHistory() {
     (state) => state.selectedTransactionId,
   );
   const selectTransaction = usePaymentStore((state) => state.selectTransaction);
-  const clearHistory = usePaymentStore((state) => state.clearHistory);
+  const deleteTransaction = usePaymentStore((state) => state.deleteTransaction);
   const selectedTransaction = useMemo(
     () =>
       history.find((transaction) => transaction.id === selectedTransactionId),
@@ -24,19 +24,7 @@ export function TransactionHistory() {
         <h2 className="text-lg font-semibold text-slate-950">
           Transaction history
         </h2>
-        {history.length > 0 ? (
-          <button
-            className="inline-flex size-9 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
-            onClick={clearHistory}
-            title="Clear history"
-            type="button"
-          >
-            <Trash2 aria-hidden="true" className="size-4" />
-            <span className="sr-only">Clear history</span>
-          </button>
-        ) : (
-          <span className="text-sm text-slate-500">{history.length}</span>
-        )}
+        <span className="text-sm text-slate-500">{history.length}</span>
       </div>
 
       {history.length === 0 ? (
@@ -46,25 +34,40 @@ export function TransactionHistory() {
       ) : (
         <div className="mt-4 grid gap-3">
           {history.map((transaction) => (
-            <button
-              className="rounded-md border border-slate-200 p-3 text-left transition hover:-translate-y-0.5 hover:border-cyan-600 hover:bg-cyan-50"
+            <div
+              className="grid grid-cols-[1fr_auto] items-stretch overflow-hidden rounded-md border border-slate-200 transition hover:-translate-y-0.5 hover:border-cyan-600 hover:bg-cyan-50"
               key={transaction.id}
-              onClick={() => selectTransaction(transaction.id)}
-              type="button"
             >
-              <span className="flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold text-slate-900">
-                  {transaction.currency} {transaction.amount.toFixed(2)}
+              <button
+                className="p-3 text-left"
+                onClick={() => selectTransaction(transaction.id)}
+                type="button"
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-semibold text-slate-900">
+                    {transaction.currency} {transaction.amount.toFixed(2)}
+                  </span>
+                  <span className="text-xs font-semibold uppercase text-slate-500">
+                    {transaction.status}
+                  </span>
                 </span>
-                <span className="text-xs font-semibold uppercase text-slate-500">
-                  {transaction.status}
+                <span className="mt-2 block text-xs text-slate-500">
+                  {getCardTypeLabel(transaction.cardType)} ending{" "}
+                  {transaction.cardNumberLast4} - Attempt {transaction.attempts}
                 </span>
-              </span>
-              <span className="mt-2 block text-xs text-slate-500">
-                {getCardTypeLabel(transaction.cardType)} ending{" "}
-                {transaction.cardNumberLast4} - Attempt {transaction.attempts}
-              </span>
-            </button>
+              </button>
+              <button
+                className="flex w-11 items-center justify-center border-l border-slate-200 text-slate-400 transition hover:bg-red-50 hover:text-red-700"
+                onClick={() => deleteTransaction(transaction.id)}
+                title={`Delete transaction ${transaction.id}`}
+                type="button"
+              >
+                <Trash2 aria-hidden="true" className="size-4" />
+                <span className="sr-only">
+                  Delete transaction {transaction.id}
+                </span>
+              </button>
+            </div>
           ))}
         </div>
       )}

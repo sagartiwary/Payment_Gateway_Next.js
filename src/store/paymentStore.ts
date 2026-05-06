@@ -21,7 +21,7 @@ interface PaymentStore {
   selectedTransactionId?: string;
   status: PaymentStatus;
   clearResult: () => void;
-  clearHistory: () => void;
+  deleteTransaction: (transactionId: string) => void;
   recordResult: (payload: PaymentPayload, result: PaymentResult) => void;
   selectTransaction: (transactionId?: string) => void;
   startProcessing: (transactionId: string, attempt: number) => void;
@@ -41,11 +41,16 @@ export const usePaymentStore = create<PaymentStore>()(
           lastResult: undefined,
           status: "idle",
         }),
-      clearHistory: () =>
-        set({
-          history: [],
-          selectedTransactionId: undefined,
-        }),
+      deleteTransaction: (transactionId) =>
+        set((state) => ({
+          history: state.history.filter(
+            (transaction) => transaction.id !== transactionId,
+          ),
+          selectedTransactionId:
+            state.selectedTransactionId === transactionId
+              ? undefined
+              : state.selectedTransactionId,
+        })),
       history: [],
       lastResult: undefined,
       recordResult: (payload, result) =>

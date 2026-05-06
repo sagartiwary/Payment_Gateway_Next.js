@@ -17,6 +17,9 @@ A frontend assignment implementation for a simulated payment gateway built with 
 - Transaction history persisted with `localStorage`.
 - Clickable transaction details.
 - Responsive layout for mobile and desktop.
+- Demo card shortcuts for faster review.
+- Live readiness score with payment UX checks.
+- Luhn card checksum validation.
 
 ## Setup
 

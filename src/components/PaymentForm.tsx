@@ -207,28 +207,34 @@ export function PaymentForm({
           inputClassName={getInputClasses("amount")}
         />
 
-        <label className="block text-sm font-medium text-slate-800">
-          {fieldLabels.currency}
-          <select
+        <fieldset className="block text-sm font-medium text-slate-800">
+          <legend>{fieldLabels.currency}</legend>
+          <div
             aria-describedby={
               errors.currency ? getErrorId("currency") : undefined
             }
-            className={getInputClasses("currency")}
-            name="currency"
-            onBlur={() => handleBlur("currency")}
-            onChange={(event: ChangeEvent<HTMLSelectElement>) =>
-              updateField(
-                "currency",
-                event.target.value as PaymentFormValues["currency"],
-              )
-            }
-            value={values.currency}
+            className="mt-2 grid h-11 grid-cols-2 rounded-md border border-slate-300 bg-slate-100 p-1"
           >
-            <option value="INR">INR</option>
-            <option value="USD">USD</option>
-          </select>
+            {(["INR", "USD"] as const).map((currency) => (
+              <button
+                aria-pressed={values.currency === currency}
+                className={[
+                  "rounded px-3 text-sm font-semibold transition",
+                  values.currency === currency
+                    ? "bg-white text-cyan-800 shadow-sm"
+                    : "text-slate-500 hover:text-slate-800",
+                ].join(" ")}
+                key={currency}
+                onBlur={() => handleBlur("currency")}
+                onClick={() => updateField("currency", currency)}
+                type="button"
+              >
+                {currency}
+              </button>
+            ))}
+          </div>
           <FieldError id={getErrorId("currency")} message={errors.currency} />
-        </label>
+        </fieldset>
       </div>
 
       <button
